@@ -72,7 +72,7 @@ app.post('/api/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) return res.status(500).json({message: 'Logout Failed'});
         res.clearCookie('connect.sid');
-        res.json({message: 'Logout Successful'});
+        res.status(200).json({message: 'Logout Successful'});
     });
 });
 

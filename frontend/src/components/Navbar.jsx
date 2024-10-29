@@ -10,8 +10,22 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      if (response.status === 200) dispatch(logout());
+      else alert(data.message);
+    } catch (e) {
+      console.error(e);
+      alert('something went wrong');
+    }
   };
 
   return (
