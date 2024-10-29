@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URL).then(() => console.log('MongoDB Connec
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(session({
-    secret: 'secret-key',
+    secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
