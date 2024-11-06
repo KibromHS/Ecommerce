@@ -1,55 +1,76 @@
-import React, { useEffect, useState } from 'react'
-import './Viewproduct.css'
-import Adminsidebar from '../Components/AdminSidebar/Adminsidebar'
-import Admincard from '../Components/AdminCard/Admincard'
+import React, { useEffect, useState } from 'react';
+import './Viewproduct.css';
+import Adminsidebar from '../Components/AdminSidebar/Adminsidebar';
+import Admincard from '../Components/AdminCard/Admincard';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Viewproduct = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setIsLoading(true);
       try {
         const response = await fetch('http://localhost:5000/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
         const data = await response.json();
         setProducts(data);
-      } catch (e) {
-        console.error('Error', e);
+      } catch (error) {
+        console.error('Error fetching products:', error);
       } finally {
         setIsLoading(false);
       }
-    }
+    };
 
     fetchProducts();
   }, []);
 
-  if(isLoading){
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast(data.message);
+        window.location.reload();
+      } else toast.error(data.message);
+    } catch (e) {
+      console.error('Error', e);
+      toast.error('Failed to delete product');
+    }
+  }
+
+  if (isLoading) {
     return (
-      <div className='view-main'>
+      <div className="view-main">
         <Adminsidebar />
-        <div className='cards'>
+        <div className="cards">
           <h1>Loading...</h1>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <>
     <div className="view-main">
-      <Adminsidebar/>
+      <Adminsidebar />
       <div className="cards">
-        {
-          products.length > 0 ? products.map((p , index) => {
-            return <Admincard  key={index+1} {...p}/>
-          }) :<h1>There is No Data Present</h1>
-        }
+        {products.length > 0 ? (
+          products.map((product, index) => (
+            <Admincard key={index} {...product} handleDelete={handleDelete} />
+          ))
+        ) : (
+          <h1>There is No Data Present</h1>
+        )}
       </div>
-
     </div>
-    </>
-  )
-}
+  );
+};
 
-export default Viewproduct
+export default Viewproduct;

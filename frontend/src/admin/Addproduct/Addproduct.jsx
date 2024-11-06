@@ -1,148 +1,139 @@
-import React, {  useState } from 'react'
-import Adminsidebar from '../Components/AdminSidebar/Adminsidebar'
-import './Addproduct.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPlay} from '@fortawesome/free-solid-svg-icons'
-import axios from 'axios'
-import toast from 'react-hot-toast'
+import React, { useState } from 'react';
+import Adminsidebar from '../Components/AdminSidebar/Adminsidebar';
+import './Addproduct.css';
+import toast from 'react-hot-toast';
 
 const Addproduct = () => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imageBase64, setImageBase64] = useState('');
+  const [name, setName] = useState('');
+  const [detail, setDetail] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const [selectedFiles, setselectedFiles] = useState(null);
-  const [imageurltoshow, setimageurltoshow] = useState(null);
-  const [name, setname] = useState(""); 
-  const [detail, setdetail] = useState("");
-  const [price, setprice] = useState("");
-  const [category, setcategory] = useState("");
-  // const [company, setcompany] = useState("");
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
 
-  let files = [];
+    // Convert the selected file to a Base64 string
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setImageBase64(event.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
 
-  const handleImage = async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-    for (let i = 0; i < selectedFiles.length; i++) {
-      let formData = new FormData();
-      formData.append('file' , selectedFiles[i]);
-      formData.append("upload_preset" , "qouutdij");
-
-      axios.post("https://api.cloudinary.com/v1_1/dwkmxsthr/upload", formData, {
-        onUploadProgress:(ProgressEvent)=>{
-          console.log("Uploading..." ,Math.round( ProgressEvent.loaded/ProgressEvent.total));
-        }
-      }).then(response=>{
-        files.push(response.data.url);
-        setimageurltoshow(files);
-      })
-    }  
-  }
-
-
-  const showdata = async (e) => {
-    e.preventDefault()
     try {
-      const response = await fetch('http://locahost:5000/api/products', {
+      const response = await fetch('http://localhost:5000/api/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ image: imageurltoshow, category, title: name, price, description: detail })
+        body: JSON.stringify({
+          image: imageBase64,
+          category,
+          title: name,
+          price,
+          description: detail
+        })
       });
 
-      if (response.status === 200) {
-        toast("Product Added to Database");
-        console.log(response.body);
+      if (response.status === 201) {
+        toast.success('Product added to the database');
       } else {
-        toast.error("Some error occurred");
-        console.log(response.body);
+        toast.error('An error occurred');
       }
-    } catch (e) {
-      console.error('Error', e);
-      alert(e.message);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error occurred while adding the product');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <>
-      <div className="add-main">
-        <Adminsidebar/>
-        <div className="add-form-data">
-          <h1 className='add-heading'>Add Product 🔔</h1>
-          <p className='heading-p'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloribus laborum quos quo tenetur exercitationem iusto officia, veniam assumenda dolorem labore ab alias facere eos dolore autem reiciendis! Beatae, exercitationem quae!</p>
-
-          <div className="border"></div>
-          <form onSubmit={showdata}>
+    <div className="add-main">
+      <Adminsidebar />
+      <div className="add-form-data">
+        <h1 className="add-heading">Add Product 🔔</h1>
+        <p className="heading-p">
+          Add details of your product along with an image to the database.
+        </p>
+        <div className="border"></div>
+        {loading ? (
+          <h2 className="m-20">Uploading...</h2>
+        ) : (
+          <form onSubmit={handleSubmit}>
             <div className="product-form">
-              <div className="textfeild">
+              <div className="textfield">
                 <h5>Product Name 🛒</h5>
-                <input type='text' className='addproducttext' placeholder="Canon Shirt " onChange={(e)=>{
-                  setname(e.target.value)
-                }}></ input>
+                <input
+                  type="text"
+                  className="addproducttext"
+                  placeholder="Product Name"
+                  onChange={(e) => setName(e.target.value)}
+                />
               </div>
-              <div className="textfeild">
+              <div className="textfield">
                 <h5>Product Detail 📢</h5>
-                <input type='text' className='addproducttext' placeholder="Denim shirt with silk design " onChange={(e)=>{
-                  setdetail(e.target.value)
-                }}></ input>
+                <input
+                  type="text"
+                  className="addproducttext"
+                  placeholder="Product Description"
+                  onChange={(e) => setDetail(e.target.value)}
+                />
               </div>
-              <div className="textfeild">
-                <h5>Product Price💸</h5>
-                <input type='text' className='addproducttext' placeholder="999 " onChange={(e)=>{
-                  setprice(e.target.value)
-                }}></ input>
+              <div className="textfield">
+                <h5>Product Price 💸</h5>
+                <input
+                  type="text"
+                  className="addproducttext"
+                  placeholder="Product Price"
+                  onChange={(e) => setPrice(e.target.value)}
+                />
               </div>
-              {/* <div className="textfeild">
-                <h5>Product Company 🏛️</h5>
-                <input type='text' className='addproducttext' placeholder="Canont "  onChange={(e)=>{
-                  setcompany(e.target.value)
-                }}></ input>
-              </div> */}
-              <div className="textfeild">
-                <h5>Product category 🌩️</h5>
-                <div className="admin-dropdown">
-                  <select value={category} onChange={(e)=>{
-                    setcategory(e.target.value)
-                  }}>
-                    <option value="Men's Clothing">Men's Clothing 👔</option>
-                    <option value="Women's Clothing">Women's Clothing 💻</option>
-                    <option value="Jewelleries">Jewelleries 🪫</option>
-                  </select>
-                </div>
-                <br />
-
-                <p>{category}</p>
+              <div className="textfield">
+                <h5>Product Category 🌩️</h5>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="admin-dropdown"
+                >
+                  <option value="">Select Category</option>
+                  <option value="Men's Clothing">Men's Clothing 👔</option>
+                  <option value="Women's Clothing">Women's Clothing 👗</option>
+                  <option value="Jewelleries">Jewelleries 💍</option>
+                </select>
               </div>
-              <div className="textfeild">
-                <h5>Add Product Images</h5>
-                <input type='file' multiple
-                  className='addproducttext' onChange={(e)=>{
-                    setselectedFiles(e.target.files)
-                  }}></ input>
+              <div className="textfield">
+                <h5>Add Product Image</h5>
+                <input
+                  type="file"
+                  className="addproducttext"
+                  onChange={handleFileChange}
+                />
               </div>
-              <div className="show-button">
-                <div onClick={handleImage} className="show">
-                  <FontAwesomeIcon icon={faPlay} style={{color: "#131416",}} /> 
-                  <h6>Show Images</h6>
-                </div>
-              </div>
-              
-              <div className="textfeild">
-                <input className='submitbutton' type="submit"  value="Enlist Now 🗾"/>
-              </div>
+              <button type="submit" className="submitbutton">
+                Enlist Now 🗾
+              </button>
             </div>
           </form>
-                
-          <div className="image-part">
-            {
-              imageurltoshow?.length > 0 ? imageurltoshow.map(e=>(
-                <img src={e} alt="clodinary product" key={e} className='pro-image' />
-              )) : <p>Please Select Some Images</p>
-            }
-          </div>
+        )}
+        <div className="image-part">
+          {imageBase64 ? (
+            <img src={imageBase64} alt="product" className="pro-image" />
+          ) : (
+            <p>Please select an image</p>
+          )}
         </div>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
 export default Addproduct;
-

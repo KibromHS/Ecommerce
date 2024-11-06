@@ -14,13 +14,24 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const { image, category, title, price, description } = req.body;
-    const newProduct = new Product({ image, category, title, rating, price, description });
+    const newProduct = new Product({ image, category, title, price, description });
     try {
-        newProduct = await newProduct.save();
-        res.status(201).json(newProduct);
+        const savedProduct = await newProduct.save();
+        res.status(201).json(savedProduct);
     } catch (e) {
         console.error('Error', e);
         res.status(500).json({ message: e.message });
+    }
+});
+
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const product = await Product.findByIdAndDelete(id);
+        res.status(200).json({ message: 'Deleted Successfully' });
+    } catch(e) {
+        console.error('Error', e);
+        res.status(500).json({ message: 'Couldn\'t Delete Product'});
     }
 });
 

@@ -3,15 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faEye, faSignOut, faAdd } from '@fortawesome/free-solid-svg-icons'
 import './Adminsidebar.css'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Adminsidebar = () => {
+  const navigate = useNavigate();
   const admin= JSON.parse(localStorage.getItem('admin'));
   const username = admin.username;
   return (
     <div className="sidebar-main">
       <div className="side-logo">
-        <h1>🛍️  Shfonians</h1>
+        <h1 onClick={() => navigate('/')} style={{cursor: 'pointer'}}>🛍️  Shfonians</h1>
       </div>
       <div className="side-links">
         <div className="link1">
