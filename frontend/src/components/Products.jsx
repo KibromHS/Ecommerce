@@ -31,13 +31,10 @@ const Products = () => {
           arr.splice(toIndex, 0, element);
         }
         
-        let allTags = [];
-        
-        for (let i = 0; i < data.length; i++) {
-          for (let j = 0; j < data[i].tags.length; j++) {
-              allTags.push(data[i].tags[j])
-          }
-        }
+        let allTags = data.map(d => d.category);
+
+        if (allTags.length == 0) return [];
+
         allTags.push('All');
 
         allTags = [...new Set(allTags)];
@@ -49,7 +46,7 @@ const Products = () => {
         const d = await response.json();
         setData(d);
         setFilter(d);
-        setTags(d);
+        setTags(getAllTags(d));
         setLoading(false);
       }
 
