@@ -46,7 +46,8 @@ router.post('/admin/login', async (req, res) => {
     const admin = await Admin.findOne({ username });
     if (!admin) return res.status(400).json({message: 'Invalid username or password'});
     if (admin.password != password) return res.status(400).json({ message: 'Invalid username or password' });
-    res.status(200);
+    req.session.adminId = admin._id;
+    res.status(200).json({id: admin._id, username: admin.username});
 });
 
 router.post('/logout', (req, res) => {

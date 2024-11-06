@@ -6,7 +6,7 @@ const Adminhome = () => {
   return (
     <>
 
-    <Adminsidebar/>
+      <Adminsidebar/>
 
     </>
     
