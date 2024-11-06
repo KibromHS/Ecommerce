@@ -39,7 +39,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'kibromhs81@gmail.com',
-        pass: 'hailesilasse'
+        pass: 'ubts wtyr ttpd jiui'
     }
 });
   
@@ -56,7 +56,7 @@ app.post('/send-email', (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.error('Error sending email:', error);
-            return res.status(500).send('Failed to send email');
+            return res.status(500).json({message: 'Failed to send email'});
         }
         console.log('Email sent:', info.response);
         res.status(200).json({message: 'Email sent successfully'});

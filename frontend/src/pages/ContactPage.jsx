@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Footer, Navbar } from "../components";
 import toast from "react-hot-toast";
 
 const ContactPage = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+  const [name, setName] = useState(user ? user.fullName : '');
+  const [email, setEmail] = useState(user ? user.email : '');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     try {
       const response = await fetch('http://localhost:5000/send-email', {
         method: 'POST',
@@ -18,8 +21,10 @@ const ContactPage = () => {
       });
       const data = await response.json();
       toast(data.message);
+      setName('');setEmail('');setMessage('');
     } catch (e) {
-      toast.error(e.message);
+      toast.error('Error occured');
+      console.error(e);
     }
   }
 
@@ -35,7 +40,8 @@ const ContactPage = () => {
               <div class="form my-3">
                 <label for="Name">Name</label>
                 <input
-                  type="email"
+                  required
+                  type="text"
                   class="form-control"
                   id="Name"
                   placeholder="Enter your name"
@@ -46,6 +52,7 @@ const ContactPage = () => {
               <div class="form my-3">
                 <label for="Email">Email</label>
                 <input
+                  required
                   type="email"
                   class="form-control"
                   id="Email"
@@ -57,6 +64,7 @@ const ContactPage = () => {
               <div class="form  my-3">
                 <label for="Password">Message</label>
                 <textarea
+                  required
                   rows={5}
                   class="form-control"
                   id="Password"
@@ -69,7 +77,6 @@ const ContactPage = () => {
                 <button
                   class="my-2 px-4 mx-auto btn btn-dark"
                   type="submit"
-                  disabled
                 >
                   Send
                 </button>
