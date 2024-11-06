@@ -33,7 +33,7 @@ const Products = () => {
         
         let allTags = data.map(d => d.category);
 
-        if (allTags.length == 0) return [];
+        if (allTags.length === 0) return [];
 
         allTags.push('All');
 

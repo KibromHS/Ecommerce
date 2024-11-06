@@ -1,6 +1,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faCircleNodes , faGhost , faTruck , faRss , faOilCan , faBarcode, faUser, faEye, faSignOut, faAdd } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faEye, faSignOut, faAdd } from '@fortawesome/free-solid-svg-icons'
 import './Adminsidebar.css'
 
 import { Link } from 'react-router-dom'
@@ -16,11 +16,11 @@ const Adminsidebar = () => {
       <div className="side-links">
         <div className="link1">
           <FontAwesomeIcon icon={faAdd} size='lg' style={{color: "#367df7",}} />
-          <Link to="/admin/add-product">  <p>Add Product</p> </Link>
+          <Link to="/admin/add-product"><p>Add Product</p></Link>
         </div>
         <div className="link1">
           <FontAwesomeIcon icon={faEye} size='lg' style={{color: "#424242",}} />
-          <Link to="/admin/view-product"> <p>View All Product</p></Link>
+          <Link to="/admin/view-product"><p>View All Product</p></Link>
         </div>
 
         {/* <div className="link1">

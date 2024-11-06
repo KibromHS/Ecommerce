@@ -4,6 +4,7 @@ import './Addproduct.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPlay} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const Addproduct = () => {
 
@@ -13,7 +14,7 @@ const Addproduct = () => {
   const [detail, setdetail] = useState("");
   const [price, setprice] = useState("");
   const [category, setcategory] = useState("");
-  const [company, setcompany] = useState("");
+  // const [company, setcompany] = useState("");
 
   let files = [];
 
@@ -36,7 +37,7 @@ const Addproduct = () => {
   }
 
 
-  const showdata = async (e)=>{
+  const showdata = async (e) => {
     e.preventDefault()
     try {
       const response = await fetch('http://locahost:5000/api/products', {
@@ -47,13 +48,12 @@ const Addproduct = () => {
         body: JSON.stringify({ image: imageurltoshow, category, title: name, price, description: detail })
       });
 
-      if(response.status===200){
-        alert("Product Added to Database");
+      if (response.status === 200) {
+        toast("Product Added to Database");
         console.log(response.body);
-      }
-      if(response.status!==200){
-          alert("there is some error occured");
-          console.log(response.body);
+      } else {
+        toast.error("Some error occurred");
+        console.log(response.body);
       }
     } catch (e) {
       console.error('Error', e);
@@ -90,21 +90,21 @@ const Addproduct = () => {
                   setprice(e.target.value)
                 }}></ input>
               </div>
-              <div className="textfeild">
+              {/* <div className="textfeild">
                 <h5>Product Company 🏛️</h5>
                 <input type='text' className='addproducttext' placeholder="Canont "  onChange={(e)=>{
                   setcompany(e.target.value)
                 }}></ input>
-              </div>
+              </div> */}
               <div className="textfeild">
                 <h5>Product category 🌩️</h5>
                 <div className="admin-dropdown">
                   <select value={category} onChange={(e)=>{
                     setcategory(e.target.value)
                   }}>
-                    <option value="Clothes">Clothes 👔</option>
-                    <option value="Gadgets">Gadgets 💻</option>
-                    <option value="Electronics">Electronics 🪫</option>
+                    <option value="Men's Clothes">Men's Clothes 👔</option>
+                    <option value="Women's Clothes">Women's Clothes 💻</option>
+                    <option value="Jewelleries">Jewelleries 🪫</option>
                   </select>
                 </div>
                 <br />
@@ -113,13 +113,12 @@ const Addproduct = () => {
               </div>
               <div className="textfeild">
                 <h5>Add Product Images</h5>
-                < input type='file' multiple
+                <input type='file' multiple
                   className='addproducttext' onChange={(e)=>{
                     setselectedFiles(e.target.files)
-                  }} ></ input>
+                  }}></ input>
               </div>
               <div className="show-button">
-
                 <div onClick={handleImage} className="show">
                   <FontAwesomeIcon icon={faPlay} style={{color: "#131416",}} /> 
                   <h6>Show Images</h6>
@@ -127,9 +126,8 @@ const Addproduct = () => {
               </div>
               
               <div className="textfeild">
-                <input  className='submitbutton' type="submit"  value="Enlist Now 🗾"/>
+                <input className='submitbutton' type="submit"  value="Enlist Now 🗾"/>
               </div>
-              
             </div>
           </form>
                 
@@ -141,12 +139,10 @@ const Addproduct = () => {
             }
           </div>
         </div>
-
       </div>
-
     </>
   )
 }
 
-export default Addproduct
+export default Addproduct;
 

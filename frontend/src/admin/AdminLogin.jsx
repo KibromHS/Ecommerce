@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Footer, Navbar } from "../components";
+import { useNavigate } from "react-router-dom";
+import { Footer } from "../components";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/action/authActions";
 
@@ -37,8 +37,6 @@ const AdminLogin = () => {
     } catch(e) {
       console.error(e);
     }
-
-    
   }
 
   const handleLogout = async () => {
