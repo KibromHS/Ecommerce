@@ -20,6 +20,7 @@ import {
 } from "./pages";
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
+import {Adminhome} from './admin/Home/Adminhome';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -39,6 +40,7 @@ root.render(
           <Route path="/checkout" element={<Checkout />} />
           <Route path="*" element={<PageNotFound />} />
           <Route path="/product/*" element={<PageNotFound />} />
+          <Route path="/admin" element={<Adminhome />} />
         </Routes>
       </Provider>
     </ScrollToTop>

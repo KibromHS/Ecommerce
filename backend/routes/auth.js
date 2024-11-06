@@ -2,6 +2,7 @@ const express = require('express');
 const User = require('../models/user');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const Admin = require('../models/admin');
 
 router.post('/register', async (req, res) => {
     const { fullName, email, password } = req.body;
@@ -38,6 +39,14 @@ router.post('/login', async (req, res) => {
 
     req.session.userId = user._id;
     res.status(200).json({user});
+});
+
+router.post('/admin/login', async (req, res) => {
+    const { username, password } = req.body;
+    const admin = await Admin.findOne({ username });
+    if (!admin) return res.status(400).json({message: 'Invalid username or password'});
+    if (admin.password != password) return res.status(400).json({ message: 'Invalid username or password' });
+    res.status(200);
 });
 
 router.post('/logout', (req, res) => {
