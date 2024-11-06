@@ -52,6 +52,13 @@
     margin-top: 15px;
     border: 1px solid black;
     border-radius: 10px;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background-color: black;
+    color: white;
+    transition: all 0.2s ease;
 }
 
 .delete-button h1{

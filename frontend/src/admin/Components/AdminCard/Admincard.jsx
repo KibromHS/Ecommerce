@@ -19,7 +19,7 @@ const Admincard = ({ _id, price, name, image, description, handleDelete }) => {
       </div>
 
       <div className="delete-button" onClick={() => handleDelete(_id)}>
-        <button>Delete Now</button>
+        <h1>Delete Now</h1>
       </div>
     </div>
   );

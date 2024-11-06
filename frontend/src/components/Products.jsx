@@ -114,7 +114,7 @@ const Products = () => {
             >
               <div className="card text-center h-100" key={product.id}>
                 <img
-                  className="card-img-top p-3"
+                  className="card-img-top p-3 object-fit-contain"
                   src={product.image}
                   alt="Card"
                   height={300}
@@ -134,7 +134,7 @@ const Products = () => {
                 </ul>
                 <div className="card-body">
                   <Link
-                    to={"/product/" + product.id}
+                    to={"/product/" + product._id}
                     className="btn btn-dark m-1"
                   >
                     Buy Now

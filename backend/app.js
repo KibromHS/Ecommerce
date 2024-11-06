@@ -16,11 +16,11 @@ app.use(cors({
     credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 mongoose.connect(process.env.MONGODB_URL).then(() => console.log('MongoDB Connected!')).catch((e) => console.error('MongoDB Error:', e));
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 app.use(session({
     secret: process.env.SECRET_KEY,
