@@ -73,6 +73,7 @@ const Addproduct = () => {
               <div className="textfield">
                 <h5>Product Name 🛒</h5>
                 <input
+                  required
                   type="text"
                   className="addproducttext"
                   placeholder="Product Name"
@@ -82,6 +83,7 @@ const Addproduct = () => {
               <div className="textfield">
                 <h5>Product Detail 📢</h5>
                 <input
+                  required
                   type="text"
                   className="addproducttext"
                   placeholder="Product Description"
@@ -91,6 +93,7 @@ const Addproduct = () => {
               <div className="textfield">
                 <h5>Product Price 💸</h5>
                 <input
+                  required
                   type="text"
                   className="addproducttext"
                   placeholder="Product Price"
@@ -100,6 +103,7 @@ const Addproduct = () => {
               <div className="textfield">
                 <h5>Product Category 🌩️</h5>
                 <select
+                  required
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="admin-dropdown"
@@ -113,6 +117,7 @@ const Addproduct = () => {
               <div className="textfield">
                 <h5>Add Product Image</h5>
                 <input
+                  required
                   type="file"
                   className="addproducttext"
                   onChange={handleFileChange}

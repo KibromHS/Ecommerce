@@ -63,5 +63,46 @@ app.post('/send-email', (req, res) => {
     });
 });
 
+app.post('/create-payment-session', async (req, res) => {
+    const { amount, email, firstName, lastName, phone } = req.body;
+    const tx_ref = `tx-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    try {
+        const response = await fetch('https://api.chapa.co/v1/transaction/initialize', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.CHAPA_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "amount": amount,
+                "email": email,
+                "first_name": firstName,
+                "last_name": lastName,
+                "currency": "ETB", 
+                "phone_number": phone,  
+                "tx_ref": tx_ref,  
+                "callback_url": "https://webhook.site/077164d6-29cb-40df-ba29-8a00e59a7e60",  
+                "return_url": "http://localhost:3000",  
+                "customization[title]": "Payment for my favourite merchant",  
+                "customization[description]": "I love online payments",  
+                "meta[hide_receipt]": "true"
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.status == 'success') {
+            res.json({ success: true, paymentUrl: data.data.checkout_url });
+        } else {
+            console.log('Error there', data);
+            res.status(500).json({ success: false, message: 'Failed to create payment session' });
+        }
+    } catch (error) {
+        console.error("Error creating payment session:", error);
+        res.status(500).json({ success: false, message: 'Error creating payment session' });
+    }
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`App running on port ${port}`));

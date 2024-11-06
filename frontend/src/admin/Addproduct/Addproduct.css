@@ -24,7 +24,7 @@
 .border{
     height: 2px;
     width: 80%;
-margin-top: 40px;
+    margin-top: 40px;
     border-bottom: 0.2px solid grey;
 }
 
@@ -70,6 +70,7 @@ input[type=submit]:active, input[type=submit]:focus {
     color: white;
     border: none;
     font-weight: 700;
+    margin-top: 40px;
 }
 
 

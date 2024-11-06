@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Footer, Navbar } from "../components";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { createPaymentSession } from "../services/paymentService"; // Assuming you have this service
+
 const Checkout = () => {
   const state = useSelector((state) => state.handleCart);
+  const authenticated = useSelector(state => state.auth.isAuthenticated);
+  const user = authenticated ? JSON.parse(localStorage.getItem('user')) : null;
+
+  const [formData, setFormData] = useState({
+    firstName: user ? user.fullName.split(' ')[0] : '',
+    lastName: user ? user.fullName.split(' ').length > 1 ? user.fullName.split(' ')[1] : '' : '',
+    email: user ? user.email : '',
+    phone: ''
+  });
+  const [loading, setLoading] = useState(false);
 
   const EmptyCart = () => {
     return (
@@ -22,15 +34,45 @@ const Checkout = () => {
 
   const ShowCheckout = () => {
     let subtotal = 0;
-    let shipping = 30.0;
+    let shipping = 30.0; // Define shipping cost
     let totalItems = 0;
+
+    // Calculate subtotal and total items
     state.map((item) => {
-      return (subtotal += item.price * item.qty);
+      subtotal += item.price * item.qty;
+      totalItems += item.qty;
     });
 
-    state.map((item) => {
-      return (totalItems += item.qty);
-    });
+    // Function to calculate total (subtotal + shipping)
+    const calculateTotal = () => {
+      return subtotal + shipping;
+    };
+
+    const handlePayment = async () => {
+      try {
+        setLoading(true);
+
+        const response = await createPaymentSession({
+          amount: calculateTotal(),
+          email: formData.email,  
+          firstName: formData.firstName,  
+          lastName: formData.lastName,
+          phone: formData.phone
+        });
+
+        if (response.success) {
+          window.location.href = response.paymentUrl;
+        } else {
+          alert("Payment session creation failed. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error initiating payment:", error);
+        alert("There was an error processing your payment. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     return (
       <>
         <div className="container py-5">
@@ -54,7 +96,7 @@ const Checkout = () => {
                         <strong>Total amount</strong>
                       </div>
                       <span>
-                        <strong>ብር {Math.round(subtotal + shipping)}</strong>
+                        <strong>ብር {Math.round(calculateTotal())}</strong>
                       </span>
                     </li>
                   </ul>
@@ -70,7 +112,7 @@ const Checkout = () => {
                   <form className="needs-validation" novalidate>
                     <div className="row g-3">
                       <div className="col-sm-6 my-1">
-                        <label for="firstName" className="form-label">
+                        <label htmlFor="firstName" className="form-label">
                           First name
                         </label>
                         <input
@@ -79,6 +121,8 @@ const Checkout = () => {
                           id="firstName"
                           placeholder=""
                           required
+                          value={formData.firstName}
+                          onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                         />
                         <div className="invalid-feedback">
                           Valid first name is required.
@@ -86,7 +130,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-sm-6 my-1">
-                        <label for="lastName" className="form-label">
+                        <label htmlFor="lastName" className="form-label">
                           Last name
                         </label>
                         <input
@@ -95,6 +139,8 @@ const Checkout = () => {
                           id="lastName"
                           placeholder=""
                           required
+                          value={formData.lastName}
+                          onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                         />
                         <div className="invalid-feedback">
                           Valid last name is required.
@@ -102,7 +148,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-12 my-1">
-                        <label for="email" className="form-label">
+                        <label htmlFor="email" className="form-label">
                           Email
                         </label>
                         <input
@@ -111,33 +157,36 @@ const Checkout = () => {
                           id="email"
                           placeholder="you@example.com"
                           required
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         />
                         <div className="invalid-feedback">
-                          Please enter a valid email address for shipping
-                          updates.
+                          Please enter a valid email address for shipping updates.
                         </div>
                       </div>
 
                       <div className="col-12 my-1">
-                        <label for="address" className="form-label">
-                          Address
+                        <label htmlFor="phone" className="form-label">
+                          Phone Number
                         </label>
                         <input
-                          type="text"
+                          type="tel"
                           className="form-control"
-                          id="address"
-                          placeholder="1234 Main St"
+                          id="phone"
+                          placeholder="0900123456"
                           required
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         />
                         <div className="invalid-feedback">
-                          Please enter your shipping address.
+                          Please enter your phone number.
                         </div>
                       </div>
 
+                      {/* 
+
                       <div className="col-12">
-                        <label for="address2" className="form-label">
-                          Address 2{" "}
-                          <span className="text-muted">(Optional)</span>
+                        <label htmlFor="address2" className="form-label">
+                          Address 2 <span className="text-muted">(Optional)</span>
                         </label>
                         <input
                           type="text"
@@ -148,11 +197,16 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-md-5 my-1">
-                        <label for="country" className="form-label">
+                        <label htmlFor="country" className="form-label">
                           Country
                         </label>
                         <br />
-                        <select className="form-select" id="country" required>
+                        <select
+                          className="form-select"
+                          id="country"
+                          required
+                          onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                        >
                           <option value="">Choose...</option>
                           <option>India</option>
                         </select>
@@ -162,7 +216,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-md-4 my-1">
-                        <label for="state" className="form-label">
+                        <label htmlFor="state" className="form-label">
                           State
                         </label>
                         <br />
@@ -176,7 +230,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-md-3 my-1">
-                        <label for="zip" className="form-label">
+                        <label htmlFor="zip" className="form-label">
                           Zip
                         </label>
                         <input
@@ -198,7 +252,7 @@ const Checkout = () => {
 
                     <div className="row gy-3">
                       <div className="col-md-6">
-                        <label for="cc-name" className="form-label">
+                        <label htmlFor="cc-name" className="form-label">
                           Name on card
                         </label>
                         <input
@@ -217,14 +271,14 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-md-6">
-                        <label for="cc-number" className="form-label">
+                        <label htmlFor="cc-number" className="form-label">
                           Credit card number
                         </label>
                         <input
                           type="text"
                           className="form-control"
                           id="cc-number"
-                          placeholder=""
+                          placeholder="1234 5678 9012 3457"
                           required
                         />
                         <div className="invalid-feedback">
@@ -233,14 +287,14 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-md-3">
-                        <label for="cc-expiration" className="form-label">
+                        <label htmlFor="cc-expiration" className="form-label">
                           Expiration
                         </label>
                         <input
                           type="text"
                           className="form-control"
                           id="cc-expiration"
-                          placeholder=""
+                          placeholder="MM/YY"
                           required
                         />
                         <div className="invalid-feedback">
@@ -249,29 +303,31 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-md-3">
-                        <label for="cc-cvv" className="form-label">
-                          CVV
+                        <label htmlFor="cc-cvc" className="form-label">
+                          CVC
                         </label>
                         <input
                           type="text"
                           className="form-control"
-                          id="cc-cvv"
-                          placeholder=""
+                          id="cc-cvc"
+                          placeholder="CVC"
                           required
                         />
                         <div className="invalid-feedback">
-                          Security code required
+                          CVC required
                         </div>
-                      </div>
-                    </div>
+                      </div> */}
+                    </div> 
 
                     <hr className="my-4" />
 
                     <button
-                      className="w-100 btn btn-primary "
-                      type="submit" disabled
+                      className="w-100 btn btn-primary btn-lg"
+                      type="button"
+                      onClick={handlePayment}
+                      disabled={loading}
                     >
-                      Continue to checkout
+                      {loading ? "Processing..." : "Pay Now"}
                     </button>
                   </form>
                 </div>
@@ -282,18 +338,8 @@ const Checkout = () => {
       </>
     );
   };
-  
-  return (
-    <>
-      <Navbar />
-      <div className="container my-3 py-3">
-        <h1 className="text-center">Checkout</h1>
-        <hr />
-        {state.length ? <ShowCheckout /> : <EmptyCart />}
-      </div>
-      <Footer />
-    </>
-  );
+
+  return state.length === 0 ? EmptyCart() : ShowCheckout();
 };
 
 export default Checkout;
