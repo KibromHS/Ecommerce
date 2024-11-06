@@ -102,8 +102,8 @@ const Addproduct = () => {
                   <select value={category} onChange={(e)=>{
                     setcategory(e.target.value)
                   }}>
-                    <option value="Men's Clothes">Men's Clothes 👔</option>
-                    <option value="Women's Clothes">Women's Clothes 💻</option>
+                    <option value="Men's Clothing">Men's Clothing 👔</option>
+                    <option value="Women's Clothing">Women's Clothing 💻</option>
                     <option value="Jewelleries">Jewelleries 🪫</option>
                   </select>
                 </div>

@@ -37,8 +37,6 @@ const Login = () => {
       alert('there was a problem');
       console.error(e);
     }
-
-    
   }
 
   return (
